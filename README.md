@@ -11,8 +11,9 @@ A native recompilation of **Mr. Nutz** (USA, `Mr. Nutz (USA) (En,Fr).sfc`) using
 
 The game boots, reaches the title screen, starts a game and renders level 1.
 Basic input (`Start`, `Right`) and the level transition have been validated in
-a headless run. Audio, real gamepad input, save states and a long soak test are
-still to validate.
+a headless run, and a fresh clone has been verified end to end with the pinned
+submodule, regeneration, build and smoke test. Audio, real gamepad input, save
+states and a long soak test are still to validate.
 
 This is a work in progress. See [`docs/PORT_STATUS.md`](docs/PORT_STATUS.md) for
 the detailed state and [`docs/PORT_NOTES.md`](docs/PORT_NOTES.md) for the

@@ -43,6 +43,10 @@ Nettoyage effectué :
 - `tools/smoke.sh` teste boot → titre → niveau 1 ;
 - `scripts/package_release.sh` et le workflow de release sont ajoutés.
 
+Validation de la Phase 0 : un clone frais du dépôt a été testé avec
+`git clone --recurse-submodules`, `tools/regen.sh`, `./build.sh` et
+`tools/smoke.sh`. Le sous-module, les pins, la génération et le build passent.
+
 ## 4. Fonctionnel validé
 
 Test headless avec le binaire d'avant nettoyage :
