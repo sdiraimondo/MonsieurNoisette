@@ -126,14 +126,53 @@ Pas de fuite mémoire ni de dérive de framerate observées.
 - aucune ROM, aucun `src/gen`, aucun `recomp/funcs.h`, aucune bibliothèque
   externe à installer.
 
-Le packager a exécuté son smoke test SDK et l'a validé.
+Le packager a exécuté son smoke test SDK et l'a validé. Le parcours complet a
+aussi été exercé depuis le zip décompressé, avec le pack de toolchain
+`cmake-clang-v1` v1.0.14 :
+
+1. le launcher du setup host s'ouvre, reconnaît la ROM et affiche
+   « ROM verified » ;
+2. « Generate & rebuild » régénère les sources, configure et compile
+   (27,7 s), puis relance le binaire reconstruit ;
+3. le launcher du binaire reconstruit affiche `PLAY`, et le jeu atteint
+   l'écran titre.
+
+Sans pack de toolchain, l'hôte retombe sur le cmake/compilateur du système :
+il faut alors les en-têtes OpenGL de développement (`mesa-libGL-devel`), sinon
+la configuration échoue. Le workflow de release télécharge et embarque le pack
+par défaut (`--embed-toolchain`), ce qui évite cette dépendance.
 
 ### Launcher
 
-`recomp-ui` est linkée dans le binaire ; le smoke test headless passe toujours.
-L'interface graphique elle-même (SDL dummy) ne peut pas être validée sans
-écran : elle se rabat sur le résolveur console, donc son rendu et ses
-interactions restent à vérifier à la main.
+Validé sous Xvfb (`SDL_VIDEODRIVER=x11`, rendu llvmpipe) :
+
+- la fenêtre « Mr. Nutz — Launcher » s'ouvre en 1100×880 ;
+- la ROM est reconnue (« ROM verified », région USA, nom du fichier) ;
+- la DualSense Edge est détectée et assignée au joueur 1 ;
+- `PLAY` ferme le launcher et ouvre la fenêtre de jeu 960×720 sur l'écran
+  titre.
+
+Les boutons `Settings` et `Mods` sont visibles mais n'ont pas été exercés.
+En mode headless sans écran, le launcher se rabat sur le résolveur console et
+le smoke test continue de passer.
+
+### Entrées, pause et overlays
+
+- `Droite` + `X` (bouton A) déplacent et font sauter le joueur ; le score est
+  passé de 250 à 850 et les pièces ont été ramassées.
+- `Shift+P` met le jeu en pause : deux captures à 2 s d'intervalle sont
+  identiques au pixel près.
+- Le self-test du framework
+  (`SNESRECOMP_OVERLAY_SELFTEST_PAD=1200`) attache une manette virtuelle et
+  ouvre/ferme le navigateur de sauvegardes puis la bande de rembobinage avec
+  les gestes Select+R et Select+R3. Résultat : `ok`, les deux panneaux
+  s'ouvrent et se ferment depuis la manette.
+- Captures : le navigateur affiche les 13 slots (`NEW SLOT`, LOAD / SAVE /
+  BACK, raccourcis clavier) ; la bande de rembobinage affiche `REWIND`,
+  l'offset (`-0.1s`) et six vignettes avec la sélection courante.
+- `Alt+Return` bascule l'état plein écran et le persiste (`Fullscreen = 1`
+  dans `config.ini`) ; Xvfb n'a pas de gestionnaire de fenêtres, donc le
+  redimensionnement bureau n'a pas pu être observé.
 
 ### Anciens problèmes
 
@@ -160,20 +199,20 @@ reproduction : [`COVERAGE.md`](COVERAGE.md).
 
 ## 5. Non validé (nécessite une session avec écran et manette)
 
-- boutons réels de la manette (saut, course, pause) ; la DualSense Edge est
-  détectée et assignée au joueur 1 ;
-- launcher, plein écran et mods ;
-- rembobinage `F12` (le ring de 60 snapshots est alloué, la touche n'a pas été
-  exercée) ;
+- boutons physiques de la DualSense Edge (saut, course, pause) et hot-plug ;
+  la détection, le mapping et les gestes sont validés avec une manette
+  virtuelle ;
 - écoute humaine de l'audio ;
-- parcours complet du niveau 1 (le smoke test ne joue que quelques secondes).
+- parcours complet du niveau 1 (le smoke test ne joue que quelques secondes) ;
+- panneaux `Settings` et `Mods` du launcher ;
+- plein écran sur un vrai gestionnaire de fenêtres (le drapeau bascule, la
+  géométrie bureau n'a pas pu être vérifiée sous Xvfb).
 
 ## 6. Prochaines étapes
 
-1. Tests manuels ci-dessus avec écran et manette.
-2. Valider le parcours « Generate & rebuild » d'un pack fraîchement dézippé.
-3. Passer `VERSION` à 1.0.0, regénérer le setup pack et taguer la release.
-4. Post-1.0 : promotion AOT ciblée, si le profil de performance le justifie
+1. Tests manuels restants avec écran et manette.
+2. Passer `VERSION` à 1.0.0, regénérer le setup pack et taguer la release.
+3. Post-1.0 : promotion AOT ciblée, si le profil de performance le justifie
    (voir [`COVERAGE.md`](COVERAGE.md)).
 
 ## 7. Commandes utiles

@@ -84,3 +84,54 @@ This captures the native S-DSP output (s16 stereo, 32 040 Hz) over the title
 and level 1, writes a WAV beside the capture, and fails when the stream is
 silent. It proves the emulated audio path works; listening is still the final
 check.
+
+## Virtual display checks
+
+The ImGui launcher and the in-game overlays can be exercised without a
+physical monitor. Force the X11 backend, because SDL3 otherwise prefers a
+Wayland session if one is present:
+
+```sh
+Xvfb :99 -screen 0 1280x1024x24 -nolisten tcp &
+cd build
+DISPLAY=:99 SDL_VIDEODRIVER=x11 SDL_AUDIO_DRIVER=dummy \
+  ./MrNutzRecomp --launcher ../ROM/Mr.\ Nutz\ \(USA\)\ \(En,Fr\).sfc
+# from another shell, once the launcher is visible:
+DISPLAY=:99 import -window root /tmp/launcher.png
+```
+
+`PLAY` starts the game; `xdotool` can then drive the keyboard. The framework's
+virtual-pad self-test checks the modal panels end to end:
+
+```sh
+DISPLAY=:99 SDL_VIDEODRIVER=x11 SDL_AUDIO_DRIVER=dummy \
+  SNESRECOMP_OVERLAY_SELFTEST_PAD=1200 SNESRECOMP_RUN_FRAMES=1500 \
+  ./MrNutzRecomp --no-launcher ../ROM/Mr.\ Nutz\ \(USA\)\ \(En,Fr\).sfc
+```
+
+It must print
+`[overlay_selftest_pad] ok: browser and rewind both opened and closed from the pad`.
+This path uses a virtual controller; it does not replace a physical pad check.
+
+## Setup pack
+
+The player-facing zip is a setup pack: a host built without generated code,
+the framework sources and the recompiler. The player's own ROM is recompiled
+on first run. Build it from a tree with no `src/gen/*.c` and no
+`recomp/funcs.h`:
+
+```sh
+cmake -S . -B build-setup -G Ninja -DCMAKE_BUILD_TYPE=Release \
+  -DSNESRECOMP_SETUP_HOST=ON
+cmake --build build-setup --parallel
+scripts/package_release.sh build-setup linux-x64 --embed-toolchain
+```
+
+`--embed-toolchain` copies the `cmake-clang-v1` pack named by
+`RETCOMM_TOOLCHAIN_DIR` into the zip; fetch it with
+`snesrecomp/tools/ci/fetch_toolchain.sh --artifact linux-x64`. Without it the
+zip is much smaller, but the first run must download the pack, or fall back to
+the system cmake/compiler, which then needs the OpenGL development headers.
+The GitHub release workflow embeds the pack and passes the matching artifact
+tag. `scripts/package_release.sh` runs the SDK generate smoke test and refuses
+to package a ROM, `src/gen/` or `recomp/funcs.h`.

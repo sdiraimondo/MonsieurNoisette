@@ -10,11 +10,13 @@ A native recompilation of **Mr. Nutz** (USA, `Mr. Nutz (USA) (En,Fr).sfc`) using
 ## Status
 
 The game boots, reaches the title screen, starts a game and renders level 1.
-Basic input (`Start`, `Right`), audio, save states and a 30-minute soak test
-have been validated in headless runs, and a fresh clone has been verified end
-to end with the pinned submodule, regeneration, build and smoke test. Real
-gamepad buttons, the launcher, rewind and a full playthrough still need a
-session with a display and a controller.
+Input, audio, save states, the launcher, pause, the save-state browser, rewind
+and a 30-minute soak test have been validated, and a fresh clone has been
+verified end to end with the pinned submodules, regeneration, build and smoke
+test. Physical gamepad buttons, the launcher's Settings/Mods panels, the
+full-chapter playthrough and fullscreen on a real window manager still need a
+session with a real display and controller. The setup pack's Generate & rebuild
+path has been exercised end to end from an unpacked zip.
 
 This is a work in progress. See [`docs/PORT_STATUS.md`](docs/PORT_STATUS.md) for
 the detailed state and [`docs/PORT_NOTES.md`](docs/PORT_NOTES.md) for the

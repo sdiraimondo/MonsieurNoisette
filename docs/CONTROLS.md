@@ -43,15 +43,20 @@ and are not tracked by Git.
 
 ## Validation status
 
-Verified on the headless route:
+Verified with a display (Xvfb) and the framework's virtual gamepad:
 
 - Start enters the game from the title screen.
-- Right moves the player.
-- The first level loads and renders.
+- Right moves the player; X (SNES A) jumps and collects coins.
+- Shift+P pauses the guest.
+- The save-state browser and the rewind filmstrip open and close from the pad
+  gestures (Select+R / Select+R3).
+- Alt+Return toggles the persisted fullscreen flag.
 
-Still to verify with a real display and controller:
+Still to verify with a physical controller:
 
-- jump and run/attack buttons;
-- pause;
+- real button presses (jump, run/attack, pause);
 - shoulder buttons if the game uses them;
 - gamepad hot-plug and multiple controllers.
+
+Keyboard and gamepad use the framework's standard mapping; the validated
+keyboard route does not replace a physical pad check.
