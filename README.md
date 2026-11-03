@@ -97,6 +97,7 @@ System shortcuts include `F11` for the save-state menu, `F12` for rewind,
 | `tools/` | `regen.sh`, `smoke.sh` |
 | `scripts/` | `package_release.sh` — player-facing setup pack |
 | `docs/` | Build, framework pin, controls, port status and notes |
+| `LICENSE` | PolyForm Noncommercial 1.0.0 for the project's own code |
 
 ## Smoke test
 
@@ -115,7 +116,12 @@ recompiler and this source tree. The player supplies their own ROM and the
 launcher generates and rebuilds locally. No ROM, `src/gen/` or
 `recomp/funcs.h` is included in the zip.
 
-The framework is licensed under the **PolyForm Noncommercial License 1.0.0**;
-see `snesrecomp/LICENSE`. The project's own source license still has to be
-chosen before a public release. ROM data is not covered by either license and
-is never distributed here.
+## License
+
+This project's own source code and documentation are released under the
+[**PolyForm Noncommercial License 1.0.0**](LICENSE). Commercial use is not
+permitted; personal, educational and community use is welcome.
+
+The `snesrecomp` framework is a separate work under the same license family;
+see `snesrecomp/LICENSE`. ROM data and generated recompiler output are not
+covered by either license and are never distributed here.
