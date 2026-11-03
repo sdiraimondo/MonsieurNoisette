@@ -211,7 +211,8 @@ reproduction : [`COVERAGE.md`](COVERAGE.md).
 ## 6. Prochaines étapes
 
 1. Tests manuels restants avec écran et manette.
-2. Passer `VERSION` à 1.0.0, regénérer le setup pack et taguer la release.
+2. Passer `VERSION` à 1.0.0, regénérer le setup pack et taguer la release
+   (procédure : [`RELEASE.md`](RELEASE.md)).
 3. Post-1.0 : promotion AOT ciblée, si le profil de performance le justifie
    (voir [`COVERAGE.md`](COVERAGE.md)).
 

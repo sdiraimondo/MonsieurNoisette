@@ -100,7 +100,7 @@ System shortcuts include `F11` for the save-state menu, `F12` for rewind,
 | `recomp-ui/` | Pre-boot launcher submodule (ROM picker, Generate & rebuild) |
 | `tools/` | `regen.sh`, `smoke.sh`, `audio_probe.sh` |
 | `scripts/` | `package_release.sh` — player-facing setup pack |
-| `docs/` | Build, framework pin, controls, coverage, port status and notes |
+| `docs/` | Build, framework pin, controls, coverage, release, port status and notes |
 | `LICENSE` | PolyForm Noncommercial 1.0.0 for the project's own code |
 
 ## Smoke test

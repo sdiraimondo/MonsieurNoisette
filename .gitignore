@@ -12,6 +12,7 @@
 /build-*/
 /dist/
 /saves/
+/.cache/
 
 # Local probe output that names paths on one machine
 /rom_probe.json
