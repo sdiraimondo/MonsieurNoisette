@@ -30,7 +30,10 @@ Procédure : [`FRAMEWORK.md`](FRAMEWORK.md).
 Nettoyage effectué :
 
 - `snesrecomp` est un sous-module Git au commit `98f41838` ;
-- `framework_pins.txt` enregistre le framework et ses sous-modules ;
+- `recomp-ui` est un sous-module au commit `a956157` ; il fournit le launcher
+  ImGui, le picker de ROM et « Generate & rebuild » ;
+- `framework_pins.txt` enregistre le framework, `recomp-ui` et leurs
+  sous-modules ;
 - `config.ini`, `keybinds.ini`, `rom.cfg` ne sont plus suivis ;
 - `STATUS_REPORT.txt` et `models` ont été supprimés ;
 - l'ancien host (`src/app`, `src/platform`, `src/overlay`) et l'ancien driver
@@ -43,6 +46,8 @@ Nettoyage effectué :
 - `tools/smoke.sh` teste boot → titre → niveau 1 ;
 - `tools/audio_probe.sh` capture la sortie DSP native et vérifie qu'elle n'est
   pas silencieuse ;
+- `scripts/package_release.sh` produit un setup pack (`dist/*-linux-x64.zip`) :
+  hôte de setup, recompilateur, analyseur natif et arbre source, sans ROM ;
 - `scripts/package_release.sh` et le workflow de release sont ajoutés.
 
 Validation de la Phase 0 : un clone frais du dépôt a été testé avec
@@ -108,6 +113,28 @@ Soak test headless de 30 minutes :
 
 Pas de fuite mémoire ni de dérive de framerate observées.
 
+### Setup pack
+
+`scripts/package_release.sh build-setup linux-x64` produit
+`dist/MrNutz-0.1.0-linux-x64.zip` (18 Mo) :
+
+- hôte de setup construit avec `-DSNESRECOMP_SETUP_HOST=ON` (sans code
+  recompilé) ;
+- arbre source complet, sous-modules compris, pour que « Generate & rebuild »
+  recompile le jeu chez le joueur ;
+- analyseur natif précompilé, polices du launcher, README et VERSION ;
+- aucune ROM, aucun `src/gen`, aucun `recomp/funcs.h`, aucune bibliothèque
+  externe à installer.
+
+Le packager a exécuté son smoke test SDK et l'a validé.
+
+### Launcher
+
+`recomp-ui` est linkée dans le binaire ; le smoke test headless passe toujours.
+L'interface graphique elle-même (SDL dummy) ne peut pas être validée sans
+écran : elle se rabat sur le résolveur console, donc son rendu et ses
+interactions restent à vérifier à la main.
+
 ### Anciens problèmes
 
 - **Clignotement du titre** : non reproduit. Les frames 700–1080 ont été
@@ -132,9 +159,9 @@ Pas de fuite mémoire ni de dérive de framerate observées.
 ## 6. Prochaines étapes
 
 1. Tests manuels ci-dessus avec écran et manette.
-2. Commit de la validation Phase 1.
-3. Mesurer la couverture et décider d'une promotion AOT ciblée.
-4. Passer `VERSION` à 1.0.0, builder le setup pack et taguer la release.
+2. Mesurer la couverture et décider d'une promotion AOT ciblée.
+3. Valider le parcours « Generate & rebuild » d'un pack fraîchement dézippé.
+4. Passer `VERSION` à 1.0.0, regénérer le setup pack et taguer la release.
 
 ## 7. Commandes utiles
 

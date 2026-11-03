@@ -38,7 +38,13 @@ for a in "$@"; do
   esac
 done
 BUILD_DIR="${POS[0]:-${BUILD_DIR:-build}}"
-PLATFORM="${POS[1]:-${PLATFORM:-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)}}"
+# Artifact tags are the framework's, not raw `uname`: linux-x64, macos-arm64.
+case "$(uname -m)" in
+  x86_64|amd64) DEFAULT_ARCH=x64 ;;
+  aarch64|arm64) DEFAULT_ARCH=arm64 ;;
+  *) DEFAULT_ARCH="$(uname -m)" ;;
+esac
+PLATFORM="${POS[1]:-${PLATFORM:-$(uname -s | tr '[:upper:]' '[:lower:]')-${DEFAULT_ARCH}}}"
 
 IMPL="snesrecomp/tools/ci/stage_setup_host.sh"
 if [ ! -f "$IMPL" ]; then

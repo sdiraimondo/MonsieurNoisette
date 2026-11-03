@@ -95,6 +95,7 @@ System shortcuts include `F11` for the save-state menu, `F12` for rewind,
 | `src/gen_stubs.c` | Hand-written bodies for unresolved generated code |
 | `src/gen/` | Generated C; never committed — regenerate locally |
 | `snesrecomp/` | Framework submodule, pinned by `framework_pins.txt` |
+| `recomp-ui/` | Pre-boot launcher submodule (ROM picker, Generate & rebuild) |
 | `tools/` | `regen.sh`, `smoke.sh`, `audio_probe.sh` |
 | `scripts/` | `package_release.sh` — player-facing setup pack |
 | `docs/` | Build, framework pin, controls, port status and notes |

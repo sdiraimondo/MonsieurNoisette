@@ -65,3 +65,31 @@ snesrecomp_target_sdl(MrNutzRecomp)
 
 snesrecomp_target_desktop_host(MrNutzRecomp)
 snesrecomp_target_rom_cache(MrNutzRecomp)
+
+# Shared Dear ImGui pre-boot launcher (ROM picker, verification, display /
+# audio / input settings). Self-contained: it brings its own ImGui, GL link and
+# staged assets, and defines RECOMP_LAUNCHER so the framework's host compiles
+# its GUI path.
+set(RECOMP_UI_ROOT "${CMAKE_SOURCE_DIR}/recomp-ui" CACHE PATH
+    "Root directory of the recomp-ui launcher repo" FORCE)
+if(NOT EXISTS "${RECOMP_UI_ROOT}/recomp_ui.cmake")
+    message(FATAL_ERROR
+        "recomp-ui missing at ${RECOMP_UI_ROOT}.\n"
+        "Run: git submodule update --init --recursive recomp-ui")
+endif()
+include(${RECOMP_UI_ROOT}/recomp_ui.cmake)
+# BOXART stages launcher_assets/img/boxart.tga beside the exe; the launcher
+# shows assets/img/boxart.tga by default. EXISTS-guarded in recomp_ui.cmake,
+# so this configures cleanly before any art is fetched.
+recomp_target_launcher_ui(MrNutzRecomp CONSOLE snes
+    BOXART "${CMAKE_SOURCE_DIR}/launcher_assets/img/boxart.tga")
+
+# Generate & rebuild from inside the launcher: pick ROM -> recompile locally
+# -> cmake --build -> relaunch. The implementation is the framework's; this
+# project contributes no configuration. recomp-ui/src is on the include path
+# because the host speaks RecompLauncherCGameInfo.
+target_sources(MrNutzRecomp PRIVATE
+    ${SNESRECOMP_ROOT}/host/snesrecomp_codegen_host.c)
+target_include_directories(MrNutzRecomp PRIVATE
+    ${SNESRECOMP_ROOT}/host
+    ${RECOMP_UI_ROOT}/src)

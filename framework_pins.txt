@@ -10,5 +10,6 @@
 # and replay the title + level 1 smoke route before committing the new pins.
 
 snesrecomp=98f41838443a7cd7f9d56bec41387a6ebfc3bcbc
+recomp-ui=a95615751b413e043983944441ed8912066c65ce
 recomp-net=8c76fb643339144a3a84d5ba8f5defe6250dcd26
 retcomm-rbengine=2a03e73693acee0fb78076ea058642c931bef12e
