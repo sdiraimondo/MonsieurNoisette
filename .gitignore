@@ -30,5 +30,8 @@
 /keybinds.ini
 /config.ini
 /input.ini
+/last_run_report.json
+/crash_report_*.json
+/state.toml
 
 .DS_Store

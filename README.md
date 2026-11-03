@@ -13,8 +13,8 @@ The game boots, reaches the title screen, starts a game and renders level 1.
 Input, audio, save states, the launcher, pause, the save-state browser, rewind
 and a 30-minute soak test have been validated, and a fresh clone has been
 verified end to end with the pinned submodules, regeneration, build and smoke
-test. Physical gamepad buttons, the launcher's Settings/Mods panels, the
-full-chapter playthrough and fullscreen on a real window manager still need a
+test. Physical gamepad buttons, a full-chapter playthrough, listening to the
+audio on real speakers and fullscreen on a real window manager still need a
 session with a real display and controller. The setup pack's Generate & rebuild
 path has been exercised end to end from an unpacked zip.
 

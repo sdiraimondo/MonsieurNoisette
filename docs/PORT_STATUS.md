@@ -152,7 +152,17 @@ Validé sous Xvfb (`SDL_VIDEODRIVER=x11`, rendu llvmpipe) :
 - `PLAY` ferme le launcher et ouvre la fenêtre de jeu 960×720 sur l'écran
   titre.
 
-Les boutons `Settings` et `Mods` sont visibles mais n'ont pas été exercés.
+Les panneaux `Settings` et `Mods` ont été ouverts et exercés sous Xvfb :
+
+- `Settings` affiche les blocs Display (échelle 3x, renderer Auto, plein
+  écran, filtrage linéaire, frame blending, VSync, run-ahead), Audio (32 000 Hz,
+  volume 100 %) et Hotkeys. La case « Linear filtering » bascule à l'on/off et
+  `Back` ramène au tableau de bord.
+- `Mods` affiche les onglets `Features` et `Installed packages`, l'arbre des
+  fonctionnalités et le paquet `High-resolution Mode 7` (snesrecomp). Le
+  multiplicateur de résolution passe de 8 à 9 puis revient à 8, et `Back`
+  ramène au tableau de bord.
+
 En mode headless sans écran, le launcher se rabat sur le résolveur console et
 le smoke test continue de passer.
 
@@ -204,7 +214,6 @@ reproduction : [`COVERAGE.md`](COVERAGE.md).
   virtuelle ;
 - écoute humaine de l'audio ;
 - parcours complet du niveau 1 (le smoke test ne joue que quelques secondes) ;
-- panneaux `Settings` et `Mods` du launcher ;
 - plein écran sur un vrai gestionnaire de fenêtres (le drapeau bascule, la
   géométrie bureau n'a pas pu être vérifiée sous Xvfb).
 
