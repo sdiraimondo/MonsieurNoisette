@@ -1,0 +1,14 @@
+# Framework revisions this port was generated and tested against.
+#
+# The game repository pins the framework as a Git submodule; these values make
+# the pins explicit for CI and for anyone reproducing a build.
+#
+# Check with:
+#   bash snesrecomp/tools/ci/record_pins.sh --root . --check framework_pins.txt
+#
+# Upgrade only as a separate change: update the submodule, regenerate, rebuild,
+# and replay the title + level 1 smoke route before committing the new pins.
+
+snesrecomp=98f41838443a7cd7f9d56bec41387a6ebfc3bcbc
+recomp-net=8c76fb643339144a3a84d5ba8f5defe6250dcd26
+retcomm-rbengine=2a03e73693acee0fb78076ea058642c931bef12e
