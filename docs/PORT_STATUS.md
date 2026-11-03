@@ -146,6 +146,18 @@ interactions restent à vérifier à la main.
   de `$0000`–`$1FFF`) et aucune référence à `$7E10C2` dans la ROM. L'ancienne
   piste n'est pas reproductible avec le framework actuel ; elle est écartée.
 
+### Couverture
+
+Capture sur 6 974 frames (titre → niveau 1, marche/sauts/courses) :
+98,4 M instructions interprétées, 331 sites de transfert, 0 routine RAM,
+0 avertissement. Les deux PCs les plus chauds (`80:822E` et `80:8231`)
+représentent ~49 % des cycles invités.
+
+Décision : **pas de promotion AOT pour la v1.0**. Le jeu tient 59,5 fps en
+100 % LLE à ~50 % d'un cœur ; une promotion demanderait analyse, régénération,
+comparaison de replay et validation du gameplay. Détails et commandes de
+reproduction : [`COVERAGE.md`](COVERAGE.md).
+
 ## 5. Non validé (nécessite une session avec écran et manette)
 
 - boutons réels de la manette (saut, course, pause) ; la DualSense Edge est
@@ -159,9 +171,10 @@ interactions restent à vérifier à la main.
 ## 6. Prochaines étapes
 
 1. Tests manuels ci-dessus avec écran et manette.
-2. Mesurer la couverture et décider d'une promotion AOT ciblée.
-3. Valider le parcours « Generate & rebuild » d'un pack fraîchement dézippé.
-4. Passer `VERSION` à 1.0.0, regénérer le setup pack et taguer la release.
+2. Valider le parcours « Generate & rebuild » d'un pack fraîchement dézippé.
+3. Passer `VERSION` à 1.0.0, regénérer le setup pack et taguer la release.
+4. Post-1.0 : promotion AOT ciblée, si le profil de performance le justifie
+   (voir [`COVERAGE.md`](COVERAGE.md)).
 
 ## 7. Commandes utiles
 
