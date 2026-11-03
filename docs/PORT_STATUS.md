@@ -41,6 +41,8 @@ Nettoyage effectué :
   vérifiées sont documentées dans [`PORT_NOTES.md`](PORT_NOTES.md) ;
 - `build.sh` ne force plus un chemin `SDL3_DIR` local ;
 - `tools/smoke.sh` teste boot → titre → niveau 1 ;
+- `tools/audio_probe.sh` capture la sortie DSP native et vérifie qu'elle n'est
+  pas silencieuse ;
 - `scripts/package_release.sh` et le workflow de release sont ajoutés.
 
 Validation de la Phase 0 : un clone frais du dépôt a été testé avec
@@ -49,37 +51,90 @@ Validation de la Phase 0 : un clone frais du dépôt a été testé avec
 
 ## 4. Fonctionnel validé
 
-Test headless avec le binaire d'avant nettoyage :
+### Boot et jeu
 
 | Frame | Résultat |
 |---|---|
-| 900 | écran titre |
+| 880 | écran titre |
 | 1800 | carte « WOODY LAND JOURNEY: 1 » |
 | 2500 | gameplay du niveau 1 |
 
 - `Start` lance bien la partie depuis le titre.
 - `Droite` déplace le joueur.
-- ~59,98 fps, ~20 s de CPU pour 44 s de temps réel.
+- 59,5–60,0 fps selon les runs ; ~50 % d'un cœur CPU.
 - Exécution : 100 % LLE (interpréteur) ; `src/gen` ne contient que les
   vecteurs IRQ.
 
-## 5. Non validé
+### Audio
 
-- audio réel (musique + SFX) ;
-- manette réelle et boutons saut/course/pause ;
-- sauvegarde/chargement d'état et rembobinage ;
-- launcher, plein écran, mods ;
-- soak test 30–60 minutes ;
-- anciens problèmes : clignotement du titre, saccades, WRAM `$10C2`.
+`tools/audio_probe.sh` capture la sortie native du S-DSP (s16 stéréo,
+32 040 Hz) sur le parcours titre → niveau 1 :
+
+| Mesure | Valeur |
+|---|---|
+| Durée capturée | 40,2 s |
+| Crête | 8107 |
+| RMS | 978 |
+| Secondes audibles | 21 |
+
+La chronologie correspond aux scènes : jingle vers 2–3 s, thème du titre vers
+12–16 s, carte de niveau vers 19–24 s, musique du niveau 1 vers 32–41 s. Le
+chemin SDL a aussi été capturé via le pilote `disk` (rééchantillonné en
+44,1 kHz) et contient le même signal. L'écoute humaine reste à faire.
+
+### Sauvegarde / chargement
+
+Testé avec le serveur de debug du framework (`build-trace`,
+`-DSNESRECOMP_ENABLE_TRACE=ON`) :
+
+1. sauvegarde de l'état en niveau 1 (`save0.sav`, 297 411 octets) ;
+2. déplacement du joueur ;
+3. chargement de l'état.
+
+Écart visuel moyen : **2,64/255** entre l'image sauvegardée et l'image
+rechargée, contre **46,35/255** après déplacement. L'état est bien restauré.
+
+### Stabilité
+
+Soak test headless de 30 minutes :
+
+| Mesure | Valeur |
+|---|---|
+| Frames | 108 000 |
+| Durée | 30 min 15 s |
+| fps moyen | 59,507 |
+| Code de sortie | 0 |
+| RSS | 7,6 Mo au boot → 42,1 Mo au pic → 32,6 Mo stable |
+
+Pas de fuite mémoire ni de dérive de framerate observées.
+
+### Anciens problèmes
+
+- **Clignotement du titre** : non reproduit. Les frames 700–1080 ont été
+  capturées ; aucune frame noire après le logo et la luminosité du titre reste
+  stable (108–109/255).
+- **Saccades** : non observées sur le soak (59,5 fps de moyenne). Une mesure
+  de gigue frame par frame n'est pas instrumentée.
+- **WRAM `$10C2`** : jamais écrite pendant 2 500 frames (trace WRAM complète
+  de `$0000`–`$1FFF`) et aucune référence à `$7E10C2` dans la ROM. L'ancienne
+  piste n'est pas reproductible avec le framework actuel ; elle est écartée.
+
+## 5. Non validé (nécessite une session avec écran et manette)
+
+- boutons réels de la manette (saut, course, pause) ; la DualSense Edge est
+  détectée et assignée au joueur 1 ;
+- launcher, plein écran et mods ;
+- rembobinage `F12` (le ring de 60 snapshots est alloué, la touche n'a pas été
+  exercée) ;
+- écoute humaine de l'audio ;
+- parcours complet du niveau 1 (le smoke test ne joue que quelques secondes).
 
 ## 6. Prochaines étapes
 
-1. Rebuild propre avec le sous-module et `tools/smoke.sh`.
-2. Valider clavier, manette, audio, sauvegardes et launcher.
-3. Soak test et test du niveau 1 complet.
-4. Re-tester les anciens problèmes ; les corriger ou les documenter.
-5. Mesurer la couverture et décider d'une promotion AOT ciblée.
-6. Passer `VERSION` à 1.0.0, builder le setup pack et taguer la release.
+1. Tests manuels ci-dessus avec écran et manette.
+2. Commit de la validation Phase 1.
+3. Mesurer la couverture et décider d'une promotion AOT ciblée.
+4. Passer `VERSION` à 1.0.0, builder le setup pack et taguer la release.
 
 ## 7. Commandes utiles
 
@@ -88,6 +143,7 @@ git submodule update --init --recursive
 tools/regen.sh --rom "ROM/Mr. Nutz (USA) (En,Fr).sfc"
 ./build.sh
 tools/smoke.sh "ROM/Mr. Nutz (USA) (En,Fr).sfc"
+tools/audio_probe.sh "ROM/Mr. Nutz (USA) (En,Fr).sfc"
 ```
 
 Voir [`BUILD.md`](BUILD.md) pour le conteneur `distrobox`.

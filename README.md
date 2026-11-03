@@ -10,10 +10,11 @@ A native recompilation of **Mr. Nutz** (USA, `Mr. Nutz (USA) (En,Fr).sfc`) using
 ## Status
 
 The game boots, reaches the title screen, starts a game and renders level 1.
-Basic input (`Start`, `Right`) and the level transition have been validated in
-a headless run, and a fresh clone has been verified end to end with the pinned
-submodule, regeneration, build and smoke test. Audio, real gamepad input, save
-states and a long soak test are still to validate.
+Basic input (`Start`, `Right`), audio, save states and a 30-minute soak test
+have been validated in headless runs, and a fresh clone has been verified end
+to end with the pinned submodule, regeneration, build and smoke test. Real
+gamepad buttons, the launcher, rewind and a full playthrough still need a
+session with a display and a controller.
 
 This is a work in progress. See [`docs/PORT_STATUS.md`](docs/PORT_STATUS.md) for
 the detailed state and [`docs/PORT_NOTES.md`](docs/PORT_NOTES.md) for the
@@ -94,7 +95,7 @@ System shortcuts include `F11` for the save-state menu, `F12` for rewind,
 | `src/gen_stubs.c` | Hand-written bodies for unresolved generated code |
 | `src/gen/` | Generated C; never committed — regenerate locally |
 | `snesrecomp/` | Framework submodule, pinned by `framework_pins.txt` |
-| `tools/` | `regen.sh`, `smoke.sh` |
+| `tools/` | `regen.sh`, `smoke.sh`, `audio_probe.sh` |
 | `scripts/` | `package_release.sh` — player-facing setup pack |
 | `docs/` | Build, framework pin, controls, port status and notes |
 | `LICENSE` | PolyForm Noncommercial 1.0.0 for the project's own code |
@@ -108,6 +109,10 @@ tools/smoke.sh /path/to/Mr.\ Nutz\ \(USA\)\ \(En,Fr\).sfc
 The test boots headlessly, reaches the title screen, starts a game, enters
 level 1 and writes a screenshot. It does not validate audio or a physical
 gamepad.
+
+`tools/audio_probe.sh` captures the native DSP output over the same route,
+writes a WAV and fails if the stream is silent. It does not replace listening
+on a real output device.
 
 ## Distribution
 

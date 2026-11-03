@@ -45,7 +45,7 @@ fails for this title.
 | `$00EC` | `music_track_id` | music track byte (old MP3 plan) | No |
 | `$0570` | `blink_timer` | 16-bit title blink timer | No |
 | `$056E`/`$056F` | blink sub/fade counters | title blink state | No |
-| `$10C2` | WRAM-resident code | old report claimed it never loaded | No |
+| `$10C2` | WRAM-resident code | old report claimed it never loaded | No — see below |
 
 If a value is needed for a new hook, confirm it in a running build with a save
 state, the debug server, or a bounded `--script` probe before adding it back to
@@ -53,13 +53,22 @@ state, the debug server, or a bounded `--script` probe before adding it back to
 
 ## Old known issues
 
-These were reported against the previous host. Re-test before fixing; the
-framework migration may already have resolved them.
+These were reported against the previous host. They were re-tested during the
+Phase 1 validation (2026-11-03):
 
-- Title-screen cursor blink: manual pixel clearing caused full-screen flicker.
-- Framerate stutter despite a stable FPS counter.
-- WRAM code at `$10C2` not loading during initialization.
-- Gamepad mapping did not match the old custom input layout.
+- **Title-screen cursor blink** — not reproduced. Frames 700–1080 were dumped:
+  no black frame after the logo, and the title's mean brightness stays at
+  108–109/255.
+- **Framerate stutter** — not observed in a 30-minute soak (59.5 fps average).
+  A per-frame jitter histogram is not instrumented, so only average pacing is
+  proven.
+- **WRAM code at `$10C2`** — not reproducible. A full WRAM write trace
+  (`SNESRECOMP_WRAM_TRACE_FILE`, `$0000`–`$1FFF`) over 2 500 frames shows the
+  byte is never written, and the ROM contains no `$7E10C2` reference. The old
+  claim was a false lead; do not add it back to `src/variables.h`.
+- **Gamepad mapping** — the old custom layout was removed. The framework uses
+  the standard SNES mapping; the DualSense Edge is detected and assigned to
+  player 1. Physical button checks remain manual.
 
 ## Current validation route
 
@@ -78,12 +87,16 @@ wait 300
 quit
 ```
 
-Observed with the pre-cleanup binary:
+Observed with the pinned framework:
 
 | Frame | Scene |
 |---|---|
-| 900 | title screen |
+| 880 | title screen |
 | 1800 | "WOODY LAND JOURNEY: 1" level card |
 | 2500 | level 1 gameplay |
 
 The route is a smoke test, not a full gameplay validation.
+
+`tools/audio_probe.sh` uses a longer version of the same route and captures
+the native DSP stream. The capture is 40.2 s long with 21 audible seconds,
+matching the logo jingle, title theme, level card and level 1 music.

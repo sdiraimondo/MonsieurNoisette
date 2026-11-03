@@ -73,3 +73,14 @@ tools/smoke.sh /path/to/Mr.\ Nutz\ \(USA\)\ \(En,Fr\).sfc
 
 This boots headlessly, reaches the title screen, starts the game, enters
 level 1, and writes a screenshot. It does not validate audio or a real gamepad.
+
+## Audio probe
+
+```sh
+tools/audio_probe.sh /path/to/Mr.\ Nutz\ \(USA\)\ \(En,Fr\).sfc
+```
+
+This captures the native S-DSP output (s16 stereo, 32 040 Hz) over the title
+and level 1, writes a WAV beside the capture, and fails when the stream is
+silent. It proves the emulated audio path works; listening is still the final
+check.
