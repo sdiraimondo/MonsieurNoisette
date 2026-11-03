@@ -9,10 +9,10 @@ $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $BuildDir = if ($env:BUILD_DIR) { $env:BUILD_DIR } else { Join-Path $Root 'build' }
 $BuildType = if ($env:CMAKE_BUILD_TYPE) { $env:CMAKE_BUILD_TYPE } else { 'Release' }
 
-$Args = @('-S', $Root, '-B', $BuildDir, '-DCMAKE_BUILD_TYPE=' + $BuildType)
-if ($env:SDL3_DIR) { $Args += '-DSDL3_DIR=' + $env:SDL3_DIR }
+$CmakeArgs = @('-S', $Root, '-B', $BuildDir, '-DCMAKE_BUILD_TYPE=' + $BuildType)
+if ($env:SDL3_DIR) { $CmakeArgs += '-DSDL3_DIR=' + $env:SDL3_DIR }
 
-cmake @Args
+cmake @CmakeArgs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 cmake --build $BuildDir --config $BuildType --parallel
 exit $LASTEXITCODE

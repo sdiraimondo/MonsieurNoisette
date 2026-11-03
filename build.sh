@@ -11,11 +11,10 @@ BUILD_DIR=${BUILD_DIR:-"$ROOT/build"}
 GENERATOR=${CMAKE_GENERATOR:-Ninja}
 BUILD_TYPE=${CMAKE_BUILD_TYPE:-Release}
 
-CMAKE_ARGS="-S $ROOT -B $BUILD_DIR -G $GENERATOR -DCMAKE_BUILD_TYPE=$BUILD_TYPE"
+set -- -S "$ROOT" -B "$BUILD_DIR" -G "$GENERATOR" -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
 if [ -n "${SDL3_DIR:-}" ]; then
-    CMAKE_ARGS="$CMAKE_ARGS -DSDL3_DIR=$SDL3_DIR"
+    set -- "$@" -DSDL3_DIR="$SDL3_DIR"
 fi
 
-# shellcheck disable=SC2086
-cmake $CMAKE_ARGS
+cmake "$@"
 cmake --build "$BUILD_DIR" --config "$BUILD_TYPE" --parallel
